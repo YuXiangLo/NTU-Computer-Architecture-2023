@@ -1,0 +1,47 @@
+\documentclass[12pt]{article}
+
+% Preamble
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage[left=3cm, right=3cm, top=2cm, bottom=2cm]{geometry}
+
+\title{CA 2023 Lab3}
+\author{Yu-Xiang Luo}
+\date{\today}
+
+% Document starts here
+\begin{document}
+
+\maketitle
+
+\section* {env} 
+Docker for testing and macos iverilog with gtk-wave for debugging
+
+\section* {difficulty}
+At first, the diff is just not working well even all the letters are same as correct output, and so I tried diff -b for neglecting trailing space and it works, I then find my bug, ALU\_out is not same, but then the correct answer is an unsigned number, which then I email TA for correctness, then I change the ALU\_out in ALU module to unsigned to fix this bug. (In lab2, ALU\_out is signed one)
+
+\section* {Branch.v}
+In this file, we have to flush when branch\_i is true, which means there's a branch request, and flush if predict\_i is True, which means it predicts it would branch, then we flush IF\_ID and fetch another instruction.
+
+\section* {Flush.v}
+In this file, we flush the pipeline register and reset the pc to branch one. There's two cases needed to handle, one is IFID flush and one is IDEX flush. The former flush is because it needs branch practically, and the latter one means the predict one does not match the branch\_result in branch\_check.v
+
+\section* {ID\_EX.v}
+Similar to lab2, but add a flush to ID\_EX to handle predict not match
+
+\section* {branch\_check.v}
+Check if the prediction is right. If not, we need to flush IDEX and branch to correct one
+
+\section* {branch\_predictor.v}
+It's a 2-bit predictor that enables strong predict and weak predict, logic is easy so viewing code might be easier than telling in report
+
+\section* {branch\_result.v}
+In this file, it returns the actual value of whether branch, and turns this value to branch\_predictor and branch\_check to check if the prediction is right. If not, then predictor states change (strong $\rightarrow$ weak, or weak neg $\rightarrow$ weak pos, and so on), and flush IDEX and IFID for prediction wrong
+
+\end{document}
+
